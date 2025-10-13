@@ -18,7 +18,13 @@ export default function App() {
       ) : (
         <p>No user data (probably running outside Telegram)</p>
       )}
-
+      <div className="w-16 h-64 border border-amber-300 border-solid rounded-full p-2">
+        <img
+          className="w-full h-full rounded-full"
+          src={user?.photoUrl}
+          alt={`image profile ${user?.firstName} ${user?.lastName}`}
+        />
+      </div>
       <button
         onClick={() => miniApp.close()}
         style={{
