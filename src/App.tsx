@@ -9,7 +9,7 @@ export default function App() {
   console.log(user);
 
   return (
-    <div className="flex items-center justify-center gap-2.5">
+    <div className="flex items-center flex-col justify-center gap-2.5">
       <h1>Telegram Erfan Fooldi Mini App 🚀</h1>
       {user ? (
         <p>
