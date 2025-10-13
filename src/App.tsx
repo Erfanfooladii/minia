@@ -6,10 +6,11 @@ export default function App() {
   const initData = useInitData();
 
   const user = initData?.user;
+  console.log(user);
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Telegram Mini App 🚀</h1>
+      <h1>Telegram Erfan Fooldi Mini App 🚀</h1>
       {user ? (
         <p>
           Hello, {user.firstName} ({user.username})
