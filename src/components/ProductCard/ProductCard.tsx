@@ -1,4 +1,4 @@
-import * as React from "react";
+// React import removed; using automatic JSX runtime
 import { Button } from "@/components/ui/button";
 import {
   Card,
