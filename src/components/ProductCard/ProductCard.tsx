@@ -18,8 +18,10 @@ type Product = {
 
 export function ProductCard({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem);
-  const hasItem = useCartStore((s) => s.hasItem);
-  const inCart = hasItem(String(product.id));
+  const removeItem = useCartStore((s) => s.removeItem);
+  const inCart = useCartStore((s) =>
+    s.items.some((i) => i.id === String(product.id))
+  );
   const addToCartMutation = useMutation({
     mutationFn: async () => {
       const res = await fetch("https://fakestoreapi.com/carts", {
@@ -44,14 +46,31 @@ export function ProductCard({ product }: { product: Product }) {
   });
   const removeFromCartMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch(`https://fakestoreapi.com/carts/${product.id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to remove");
-      return res.json();
+      removeItem(String(product.id));
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      try {
+        const res = await fetch(
+          `https://fakestoreapi.com/carts/${product.id}`,
+          {
+            method: "DELETE",
+            signal: controller.signal,
+          }
+        );
+        clearTimeout(timeoutId);
+        if (!res.ok) throw new Error("Failed to remove");
+        return res.json();
+      } catch (err) {
+        addItem({
+          id: String(product.id),
+          title: product.title,
+          price: product.price,
+        });
+        throw err;
+      }
     },
-    onSuccess: () => {},
   });
+  // Removed manual mini app mounting; handled by provider when used
 
   const isProcessing =
     addToCartMutation.isPending || removeFromCartMutation.isPending;
@@ -89,6 +108,7 @@ export function ProductCard({ product }: { product: Product }) {
             ? "Remove from cart"
             : "Add to cart"}
         </Button>
+        {/* Telegram MainButton removed until SDK provider is configured */}
       </div>
     </Card>
   );
