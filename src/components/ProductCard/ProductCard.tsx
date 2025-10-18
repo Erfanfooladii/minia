@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
 import { useCartStore } from "@/store/cart";
+import { usePopup } from "@tma.js/sdk-react";
 
 type Product = {
   id: number;
@@ -70,10 +71,11 @@ export function ProductCard({ product }: { product: Product }) {
       }
     },
   });
-  // Removed manual mini app mounting; handled by provider when used
 
   const isProcessing =
     addToCartMutation.isPending || removeFromCartMutation.isPending;
+
+  const popup = usePopup();
 
   return (
     <Card className="flex flex-col justify-between w-64 h-60 p-4 shadow-md">
@@ -94,11 +96,30 @@ export function ProductCard({ product }: { product: Product }) {
             inCart ? "bg-red-500 hover:bg-red-600" : "bg-primary"
           }`}
           disabled={isProcessing}
-          onClick={() => {
+          onClick={async () => {
             if (inCart) {
-              removeFromCartMutation.mutate();
+              const buttonId = await popup.open({
+                title: `Remove ${product.title}`,
+                message:
+                  "Are you sure you want to remove this product from your cart?",
+                buttons: [
+                  { id: "ok", type: "default", text: "yes" },
+                  { id: "cancel", type: "destructive", text: "cancele" },
+                ],
+              });
+
+              if (buttonId === "ok") {
+                removeFromCartMutation.mutate();
+              } else {
+                console.log("User canceled removal");
+              }
             } else {
               addToCartMutation.mutate();
+              await popup.open({
+                title: `✅ ${product.title}`,
+                message: "Added to cart!!",
+                buttons: [{ id: "ok", type: "default", text: "ok" }],
+              });
             }
           }}
         >
