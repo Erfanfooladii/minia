@@ -1,7 +1,7 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "./components/ui/button";
 import { useEffect } from "react";
-import { useMainButton } from "@tma.js/sdk-react";
+import { useBackButton } from "@tma.js/sdk-react";
 
 interface LinkItem {
   titile: string;
@@ -9,18 +9,22 @@ interface LinkItem {
 }
 
 export default function App() {
-  const mainButton = useMainButton();
+  let navigate = useNavigate();
+
+  const backButton = useBackButton();
   useEffect(() => {
-    if (!mainButton) return;
-    mainButton.setText("Test Erfan click");
-    mainButton.show();
-    const handleClick = () => console.log("MainButton clicked");
-    mainButton.on("click", handleClick);
-    return () => {
-      mainButton.off("click", handleClick);
-      mainButton.hide();
+    if (!backButton) return;
+    backButton.show();
+    const handleClick = () => {
+      navigate(-1);
+      console.log("MainButton clicked");
     };
-  }, [mainButton]);
+    backButton.on("click", handleClick);
+    return () => {
+      backButton.off("click", handleClick);
+      backButton.hide();
+    };
+  }, [backButton]);
   const linkItems: LinkItem[] = [
     {
       titile: "Home",
@@ -43,14 +47,6 @@ export default function App() {
         ))}
       </header>
       <main className="px-3.5">
-        <div className="mb-4 flex gap-2">
-          <Button variant="secondary" onClick={() => mainButton?.show()}>
-            Show MainButton
-          </Button>
-          <Button variant="secondary" onClick={() => mainButton?.hide()}>
-            Hide MainButton
-          </Button>
-        </div>
         <Outlet />
       </main>
     </div>
