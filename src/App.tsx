@@ -1,6 +1,6 @@
 import { Link, Outlet } from "react-router-dom";
 import { Button } from "./components/ui/button";
-import BackButtonHandler from "./components/‌BackButton";
+import { useTelegramBackButton } from "./hooks/useTelegramBackButton";
 
 interface LinkItem {
   titile: string;
@@ -18,6 +18,8 @@ export default function App() {
       path: "/cart",
     },
   ];
+  useTelegramBackButton();
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="flex items-center justify-center gap-6 py-4">
@@ -30,7 +32,6 @@ export default function App() {
         ))}
       </header>
       <main className="px-3.5">
-        <BackButtonHandler />
         <Outlet />
       </main>
     </div>
