@@ -1,30 +1,40 @@
+import { useTelegram } from "@/hooks/useTelegram";
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useBackButton } from "@tma.js/sdk-react";
+import { useLocation } from "react-router-dom";
 
-export const BackButton = () => {
-  const navigate = useNavigate();
+const BackButtonHandler = () => {
+  const { isReady, isInTelegram, showBackButton, hideBackButton, webApp } =
+    useTelegram();
   const location = useLocation();
-  const backButton = useBackButton();
 
   useEffect(() => {
-    if (!backButton) return;
-    backButton.show();
-    const handleClick = () => {
+    if (!isReady || !isInTelegram || !webApp) return;
+
+    const handleBack = () => {
       if (location.pathname === "/") {
-        backButton.hide();
+        webApp.close();
       } else {
-        navigate(-1);
+        window.history.back();
       }
     };
 
-    backButton.on("click", handleClick);
+    showBackButton();
+    webApp.back_button.onClick(handleBack);
 
     return () => {
-      backButton.off("click", handleClick);
-      backButton.hide();
+      hideBackButton();
+      webApp.back_button.offClick(handleBack);
     };
-  }, [backButton, location.pathname, navigate]);
+  }, [
+    isReady,
+    isInTelegram,
+    location.pathname,
+    webApp,
+    showBackButton,
+    hideBackButton,
+  ]);
 
   return null;
 };
+
+export default BackButtonHandler;

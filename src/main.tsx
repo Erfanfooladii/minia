@@ -4,9 +4,9 @@ import "./index.css";
 import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home.tsx";
-import { SDKProvider } from "@tma.js/sdk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Cart from "./pages/Cart.tsx";
+import { TelegramProvider } from "./contexts/TelegramProvider.tsx";
 
 const router = createBrowserRouter([
   {
@@ -23,10 +23,10 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <SDKProvider>
+    <TelegramProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
-    </SDKProvider>
+    </TelegramProvider>
   </StrictMode>
 );

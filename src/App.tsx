@@ -1,7 +1,6 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { Button } from "./components/ui/button";
-import { useEffect } from "react";
-import { useBackButton } from "@tma.js/sdk-react";
+import BackButtonHandler from "./components/‌BackButton";
 
 interface LinkItem {
   titile: string;
@@ -9,22 +8,6 @@ interface LinkItem {
 }
 
 export default function App() {
-  let navigate = useNavigate();
-
-  const backButton = useBackButton();
-  useEffect(() => {
-    if (!backButton) return;
-    backButton.show();
-    const handleClick = () => {
-      navigate(-1);
-      console.log("MainButton clicked");
-    };
-    backButton.on("click", handleClick);
-    return () => {
-      backButton.off("click", handleClick);
-      backButton.hide();
-    };
-  }, [backButton]);
   const linkItems: LinkItem[] = [
     {
       titile: "Home",
@@ -47,6 +30,7 @@ export default function App() {
         ))}
       </header>
       <main className="px-3.5">
+        <BackButtonHandler />
         <Outlet />
       </main>
     </div>
