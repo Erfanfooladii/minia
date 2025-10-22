@@ -1,9 +1,11 @@
-import { useTelegram } from "@/hooks/useTelegram";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useTelegram } from "@/hooks/useTelegram";
 
 const BackButtonHandler = () => {
-  const { isReady, isInTelegram, webApp } = useTelegram();
+  const { isReady, isInTelegram, webApp, showBackButton, hideBackButton } =
+    useTelegram();
+
   const location = useLocation();
 
   useEffect(() => {
@@ -11,28 +13,26 @@ const BackButtonHandler = () => {
 
     const handleBack = () => {
       if (location.pathname === "/") {
-        webApp.close();
+        hideBackButton();
+        webApp.close?.();
       } else {
         window.history.back();
       }
     };
-
-    try {
-      webApp.back_button.show();
-      webApp.back_button.onClick(handleBack);
-    } catch (e) {
-      console.warn("back_button not available", e);
-    }
-
+    showBackButton();
+    webApp.back_button.onClick(handleBack);
     return () => {
-      try {
-        webApp.back_button.offClick(handleBack);
-        webApp.back_button.hide();
-      } catch (e) {
-        console.warn("Error cleaning up back_button", e);
-      }
+      webApp.back_button.offClick(handleBack);
+      hideBackButton();
     };
-  }, [isReady, isInTelegram, location.pathname, webApp]);
+  }, [
+    isReady,
+    isInTelegram,
+    webApp,
+    location.pathname,
+    showBackButton,
+    hideBackButton,
+  ]);
 
   return null;
 };
